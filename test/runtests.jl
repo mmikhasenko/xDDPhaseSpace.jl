@@ -30,6 +30,7 @@ const mπ⁺ = 0.13957039
 const mD⁰ = 1.86483
 const mD⁺ = 1.86965
 const mDˣ⁺ = 2.0102558
+const ΓDˣ⁺ = 83.4e-6
 
 # mapping and integrating Dalitz
 
@@ -87,4 +88,37 @@ import xDDPhaseSpace: σ3of1_pm, σ3of1, σ2of3_pm
         (ms.m3 + ms.m1)^2 .≤
         σ2of3_pm(σ3_x(x), ms^2, m^2) .≤
         (m - ms.m2)^2)
+end
+
+
+
+decay_channel = πDD((m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺))
+
+ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺)) # 1MeV from threshold
+
+@testset "πDD decay channel with Breit-Wigner resonances" begin
+    # Create decay channel with πDD and two D*+ resonances
+    decay_channel = πDD((m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺))
+
+    # Test threshold calculation 1MeV above threshold
+    ρ_value = ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺))
+
+    # Verify the result is a positive number
+    @test ρ_value > 0
+    @test typeof(ρ_value) <: Real
+
+    # Test that the decay channel has the expected structure
+    @test decay_channel.ms.m1 == mπ⁺
+    @test decay_channel.ms.m2 == mD⁰
+    @test decay_channel.ms.m3 == mD⁰
+    @test decay_channel.R12.m == mDˣ⁺
+    @test decay_channel.R12.Γ == ΓDˣ⁺
+    @test decay_channel.R13.m == mDˣ⁺
+    @test decay_channel.R13.Γ == ΓDˣ⁺
+
+    # Test branch points calculation
+    branch_pts = branch_points(decay_channel)
+    @test length(branch_pts) == 2
+    @test all(real.(branch_pts) .> 0)
+    @test all(imag.(branch_pts) .< 0)  # Branch points should have negative imaginary parts due to decay width
 end
