@@ -73,6 +73,8 @@ decay_channel = πDD(
 
 # Calculate phase space density 1 MeV above threshold
 ρ_value = ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺))
+# Also works for complex energies
+ρ_value_c = ρ_thr(decay_channel, WithThrE(1.0 + 0.1im, mD⁰ + mDˣ⁺))
 
 # Get complex branch points
 branch_pts = branch_points(decay_channel)
