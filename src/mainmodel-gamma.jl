@@ -37,8 +37,8 @@ decay_matrix_element_squared(d::γDD, s, σ3, σ2) = covertapply(
     d, s, σ3, σ2)
 
 branch_points(d::γDD) = (
-    m2e(d.ms[3] + sqrt(pole_position(d.R12))),
-    m2e(d.ms[2] + sqrt(pole_position(d.R13))))
+    d.ms[3] + sqrt(pole_position(d.R12)),
+    d.ms[2] + sqrt(pole_position(d.R13)))
 
 function ρ_tb(d::γDD, e::Real)
     M, m = d.R13.m, d.ms.m2

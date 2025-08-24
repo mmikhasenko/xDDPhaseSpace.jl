@@ -122,3 +122,31 @@ decay_channel = πDD((m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ =
     @test all(real.(branch_pts) .> 0)
     @test all(imag.(branch_pts) .< 0)  # Branch points should have negative imaginary parts due to decay width
 end
+
+@testset "γDD decay channel with Breit-Wigner resonances" begin
+    # Define transition matrix elements for γDD
+    μ12 = -3.77  # Transition matrix element < D | mu | D* >
+    μ13 = +3.77 # Transition matrix element < D | mu | D* >
+
+    # Create decay channel with γDD and two D*+ resonances
+    decay_channel = γDD((m1 = 0.0, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), μ12, μ13)
+
+    # Test threshold calculation 1MeV above threshold
+    ρ_value = ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺))
+
+    # Verify the result is a positive number
+    @test ρ_value > 0
+    @test typeof(ρ_value) <: Real
+
+    # Test branch points calculation
+    branch_pts = branch_points(decay_channel)
+    @test length(branch_pts) == 2
+    @test all(real.(branch_pts) .> 0)
+    @test all(imag.(branch_pts) .< 0)  # Branch points should have negative imaginary parts due to decay width
+
+    # Test that the decay channel can be converted to NamedTuple
+    nt = obj2nt(decay_channel)
+    @test startswith(nt.type, "γDD")
+    @test nt.μ12 == μ12
+    @test nt.μ13 == μ13
+end
