@@ -31,6 +31,8 @@ export branch_points
 export πDD
 include("covariant_exptessions.jl")
 include("mainmodel-pi.jl")
+export γDD
+include("mainmodel-gamma.jl")
 
 export obj2nt
 export constructchannel
