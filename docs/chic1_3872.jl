@@ -38,10 +38,9 @@ asymptotics = [ρ_thr(ch, e_matching) for ch in channels]
 
 # 
 let
-    plot()
+    plot(xlab = "Δm(Dˣ⁰D⁰) [GeV]", ylab = "ρ(m)")
     for (ch, asy, lab) in zip(channels, asymptotics, labs)
         plot!(e -> ρ_thr(ch, WithThrE(e, thr)) / asy, -2, 2; lab)
     end
-    plot!()
+    plot!(yscale = :log10)
 end
-plot!(yscale = :log10)
