@@ -4,7 +4,7 @@ using Cuba
 using Parameters
 
 import Base.^
-^(ms::NamedTuple{(:m1, :m2, :m3), T} where {T}, n::Int) = Tuple(ms) .^ n  # type piracy -- not good
+^(ms::NamedTuple{(:m1, :m2, :m3),T} where {T}, n::Int) = Tuple(ms) .^ n  # type piracy -- not good
 
 export WithThrE
 export e2m

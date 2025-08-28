@@ -1,7 +1,7 @@
 obj2nt(nt::NamedTuple) = nt
 
 # deserilization
-function constructchannel(ser::NamedTuple{(:R12, :R13, :ms, :type), T} where T)
+function constructchannel(ser::NamedTuple{(:R12, :R13, :ms, :type),T} where {T})
     # Try to find the type in the parent module first, then in current module
     if startswith(ser.type, "γDD")
         type = isdefined(Main, :X2DDpi) ? Main.X2DDpi.γDD : γDD
@@ -16,7 +16,7 @@ function constructchannel(ser::NamedTuple{(:R12, :R13, :ms, :type), T} where T)
     type(ms, R12, R13)
 end
 
-constructlineshape(R::NamedTuple{(:m, :Γ), T} where T) = R
+constructlineshape(R::NamedTuple{(:m, :Γ),T} where {T}) = R
 # 
 function constructlineshape(R::NamedTuple)
     type = eval(Meta.parse(R.type))

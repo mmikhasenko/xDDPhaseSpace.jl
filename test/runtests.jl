@@ -18,7 +18,8 @@ end
     @test xDDPhaseSpace.A(v) != 0
     @test xDDPhaseSpace.B(v) != 0
     @test xDDPhaseSpace.C(v) != 0
-    @test xDDPhaseSpace.C((; s, s12, s13, msq)) ≈ xDDPhaseSpace.C((; s12 = s13, s13 = s12, s, msq))
+    @test xDDPhaseSpace.C((; s, s12, s13, msq)) ≈
+          xDDPhaseSpace.C((; s12 = s13, s13 = s12, s, msq))
     @test xDDPhaseSpace.D(v) != 0
     @test xDDPhaseSpace.E(v) != 0
     @test xDDPhaseSpace.G(v) != 0
@@ -50,8 +51,15 @@ decay_matrix_element_squared(d::TestCh, s, σ3, σ2) = 1.0
 
     s = e2m(e_test)^2
     ms = ms_test
-    ρ_1dim = quadgk(σ1 -> sqrt(xDDPhaseSpace.λ(s, ms.m1^2, σ1) * xDDPhaseSpace.λ(σ1, ms.m2^2, ms.m3^2)) / σ1,
-        (ms.m2 + ms.m3)^2, (sqrt(s) - ms.m1)^2)[1] / (8π)^2 / (2π * s)
+    ρ_1dim =
+        quadgk(
+            σ1 ->
+                sqrt(
+                    xDDPhaseSpace.λ(s, ms.m1^2, σ1) * xDDPhaseSpace.λ(σ1, ms.m2^2, ms.m3^2),
+                ) / σ1,
+            (ms.m2 + ms.m3)^2,
+            (sqrt(s) - ms.m1)^2,
+        )[1] / (8π)^2 / (2π * s)
 
     @test abs(ρ_2dim - ρ_1dim) / ρ_1dim < 1e-4
 end
@@ -75,30 +83,26 @@ import xDDPhaseSpace: σ3of1_pm, σ3of1, σ2of3_pm
     #
     x = rand()
     @show x
-    @test prod(
-        (ms.m1 + ms.m2)^2 .≤
-        σ3of1_pm(σ1_x(x), ms^2, m^2) .≤
-        (m - ms.m3)^2)
+    @test prod((ms.m1 + ms.m2)^2 .≤ σ3of1_pm(σ1_x(x), ms^2, m^2) .≤ (m - ms.m3)^2)
     #
     σ3_x(x) = (ms.m1 + ms.m2)^2 + x * ((m - ms.m3)^2 - (ms.m1 + ms.m2)^2)
     #
     x = rand()
     @show x
-    @test prod(
-        (ms.m3 + ms.m1)^2 .≤
-        σ2of3_pm(σ3_x(x), ms^2, m^2) .≤
-        (m - ms.m2)^2)
+    @test prod((ms.m3 + ms.m1)^2 .≤ σ2of3_pm(σ3_x(x), ms^2, m^2) .≤ (m - ms.m2)^2)
 end
 
 
 
-decay_channel = πDD((m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺))
+decay_channel =
+    πDD((m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺))
 
 ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺)) # 1MeV from threshold
 
 @testset "πDD decay channel with Breit-Wigner resonances" begin
     # Create decay channel with πDD and two D*+ resonances
-    decay_channel = πDD((m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺))
+    decay_channel =
+        πDD((m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺))
 
     # Test threshold calculation 1MeV above threshold
     ρ_value = ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺))
@@ -129,7 +133,13 @@ end
     μ13 = +3.77 # Transition matrix element < D | mu | D* >
 
     # Create decay channel with γDD and two D*+ resonances
-    decay_channel = γDD((m1 = 0.0, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), μ12, μ13)
+    decay_channel = γDD(
+        (m1 = 0.0, m2 = mD⁰, m3 = mD⁰),
+        BW(m = mDˣ⁺, Γ = ΓDˣ⁺),
+        BW(m = mDˣ⁺, Γ = ΓDˣ⁺),
+        μ12,
+        μ13,
+    )
 
     # Test threshold calculation 1MeV above threshold
     ρ_value = ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺))
