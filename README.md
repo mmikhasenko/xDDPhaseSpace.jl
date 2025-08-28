@@ -1,10 +1,11 @@
 # xDDPhaseSpace.jl
 
-A Julia package for calculating 3-body phase space with analytic continuation into the complex plane.
+A Julia package for calculating 3-body phase space with analytic continuation into the complex plane. xDDPhaseSpace.jl calculates 3-body phase space integrals with complex energy support. It handles analytic continuation by carefully selecting integration paths to avoid singularities.
 
-## Overview
+## Covariant model description
 
-xDDPhaseSpace.jl calculates 3-body phase space integrals with complex energy support. It handles analytic continuation by carefully selecting integration paths to avoid singularities.
+- Study of the doubly charmed tetraquark $T_{cc}^+$​ - [INSPIRE:1915358](https://inspirehep.net/literature/1915358)
+- Effective-range expansion of the $T_{cc}^+$ - [INSPIRE:2048996](https://inspirehep.net/literature/2048996)
 
 ## Architecture
 
