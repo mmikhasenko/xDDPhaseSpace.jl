@@ -1,6 +1,6 @@
 # γDD
-struct γDD{T1,T2,T3} <: AbstractxDD
-    ms::NamedTuple{(:m1, :m2, :m3),T1}
+struct γDD{T1, T2, T3} <: AbstractxDD
+    ms::NamedTuple{(:m1, :m2, :m3), T1}
     R12::T2
     R13::T3
     μ12::Float64 # Transition matrix element < D | mu | D* >
@@ -46,10 +46,9 @@ decay_matrix_element_squared(d::γDD, s, σ3, σ2) = covertapply(
 branch_points(d::γDD) =
     (d.ms[3] + sqrt(pole_position(d.R12)), d.ms[2] + sqrt(pole_position(d.R13)))
 
-function ρ_tb(d::γDD, e::Real)
-    M, m = d.R13.m, d.ms.m2
-    sqrts = e2m(e)
-    sqrts < M + m ? 0.0 : sqrt(λ(e2m(e)^2, M^2, m^2)) / e2m(e)^2
+function ρ_tb(d::γDD, m::Real)
+    mR, mB = d.R13.m, d.ms.m2
+    m < mR + mB ? 0.0 : sqrt(λ(m^2, mR^2, mB^2)) / m^2
 end
 
 #                                _|  _|  _|                        _|      _|                      

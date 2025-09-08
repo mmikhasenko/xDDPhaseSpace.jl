@@ -6,7 +6,7 @@ end
 
 function covertapply(𝔐², d::AbstractxDD, s, σ3, σ2)
     msq = masses(d)^2
-    v = (; s, s12 = σ3, s13 = σ2, msq)
+    v = (; s, s12=σ3, s13=σ2, msq)
     # 	
     J₁₂ᴵ, J₁₂ᴵᴵ = Jᴵ(σ3, d.R12), Jᴵᴵ(σ3, d.R12)
     J₁₃ᴵ, J₁₃ᴵᴵ = Jᴵ(σ2, d.R13), Jᴵᴵ(σ2, d.R13)
@@ -50,10 +50,9 @@ decay_matrix_element_squared(d::πDD, s, σ3, σ2) = covertapply(
 branch_points(d::πDD) =
     (d.ms[3] + sqrt(pole_position(d.R12)), d.ms[2] + sqrt(pole_position(d.R13)))
 
-function ρ_tb(d::πDD, e::Real)
-    M, m = d.R13.m, d.ms.m2
-    sqrts = e2m(e)
-    sqrts < M + m ? 0.0 : sqrt(λ(e2m(e)^2, M^2, m^2)) / e2m(e)^2
+function ρ_tb(d::πDD, m::Real)
+    m_res, m_spect = d.R13.m, d.ms.m2
+    m < m_res + m_spect ? 0.0 : sqrt(λ(m^2, m_res^2, m_spect^2)) / m^2
 end
 
 #                                _|  _|  _|                        _|      _|                      
@@ -64,5 +63,5 @@ end
 
 #
 obj2nt(ch::πDD) =
-    (type = string(typeof(ch)), ms = ch.ms, R12 = obj2nt(ch.R12), R13 = obj2nt(ch.R13))
+    (type=string(typeof(ch)), ms=ch.ms, R12=obj2nt(ch.R12), R13=obj2nt(ch.R13))
 #

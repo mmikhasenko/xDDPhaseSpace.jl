@@ -1,7 +1,7 @@
 name = "xDDPhaseSpace"
 uuid = "457bd369-aa38-418d-83c3-59398da2a644"
 authors = ["Mikhail Mikhasenko <mikhail.mikhasenko@cern.ch>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 Cuba = "8a292aeb-7a57-582c-b821-06e4c11590b1"
