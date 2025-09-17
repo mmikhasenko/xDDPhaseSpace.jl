@@ -47,7 +47,7 @@ decay_matrix_element_squared(d::TestCh, s, σ3, σ2) = 1.0
     ms_test = (m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰)
 
     t = TestCh(ms_test)
-    ρ_2dim = ρ_thr(t, e_test)
+    ρ_2dim = ρ_thr(t, e2m(e_test))
 
     s = e2m(e_test)^2
     ms = ms_test
@@ -97,7 +97,7 @@ end
 decay_channel =
     πDD((m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺))
 
-ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺)) # 1MeV from threshold
+ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺) |> e2m) # 1MeV from threshold
 
 @testset "πDD decay channel with Breit-Wigner resonances" begin
     # Create decay channel with πDD and two D*+ resonances
@@ -105,7 +105,7 @@ decay_channel =
         πDD((m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺))
 
     # Test threshold calculation 1MeV above threshold
-    ρ_value = ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺))
+    ρ_value = ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺) |> e2m)
 
     # Verify the result is a positive number
     @test ρ_value > 0
@@ -142,7 +142,7 @@ end
     )
 
     # Test threshold calculation 1MeV above threshold
-    ρ_value = ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺))
+    ρ_value = ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺) |> e2m)
 
     # Verify the result is a positive number
     @test ρ_value > 0
