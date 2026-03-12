@@ -17,7 +17,7 @@ struct interpolated{T<:AbstractxDD,F1<:Real,F2<:Real,V}
 end
 
 """
-    interpolated(d::AbstractxDD, cutoff::Real; estep_GeV=0.01e-3)
+    interpolated(d::AbstractxDD, cutoff::Real; mstep=0.01e-3)
 
 Construct an interpolated representation of the threshold phase-space density
 for channel `d`.
@@ -38,11 +38,11 @@ continuous normalization.
 - `cutoff`: upper end of the interpolation window in GeV.
 
 # Keywords
-- `estep_GeV`: spacing of the interpolation grid in GeV.
+- `mstep`: spacing of the interpolation grid in GeV.
 """
-function interpolated(d::AbstractxDD, cutoff::Real; estep_GeV=0.01e-3)
+function interpolated(d::AbstractxDD, cutoff::Real; mstep=0.01e-3)
     mth = masses(d) |> sum
-    mv = mth:estep_GeV:(cutoff+2*estep_GeV)
+    mv = mth:mstep:(cutoff+2*mstep)
     calv = ρ_thr.(Ref(d), mv)
     itr = interpolate((mv,), calv, Gridded(Linear()))
     cutoffratio = real(ρ_thr(d, cutoff)) / ρ_tb(d, cutoff)

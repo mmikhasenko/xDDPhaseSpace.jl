@@ -125,7 +125,7 @@ ch_gamma = γDD(
 )
 
 # Build an interpolated version of ρ_thr up to the selected cutoff.
-ch_gamma_interpolated = interpolated(ch_gamma, 3.8725; estep_GeV = 1.3e-3)
+ch_gamma_interpolated = interpolated(ch_gamma, 3.8725; mstep = 1.3e-3)
 
 thr = mDstar0 + mD0
 m = thr + 5 * 1.3e-3

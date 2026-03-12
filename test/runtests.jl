@@ -176,16 +176,16 @@ end
         μ13,
     )
 
-    estep_GeV = 1.3e-3
+    mstep = 1.3e-3
     m_thr_eff = mD⁰ + mDˣ⁺
-    cutoff = m_thr_eff + 5 * estep_GeV
+    cutoff = m_thr_eff + 5 * mstep
 
-    ch_gamma_interpolated = interpolated(ch_gamma, cutoff; estep_GeV)
+    ch_gamma_interpolated = interpolated(ch_gamma, cutoff; mstep)
 
     # The interpolation grid starts at the first stored knot. The 6th
     # coefficient corresponds to m = m_thr + 5 * Δm for this grid.
     m_thr = first(ch_gamma_interpolated.itr.knots[1])
-    m_test = m_thr + 5 * estep_GeV
+    m_test = m_thr + 5 * mstep
     @test m_test ≈ ch_gamma_interpolated.itr.knots[1][6]
 
     # 1. Interpolated at m = m_thr + 5 * Δm should match ρ_thr exactly
