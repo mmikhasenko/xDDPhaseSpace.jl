@@ -98,3 +98,51 @@ decay_channel_gamma = γDD(
 branch_pts_pi = branch_points(decay_channel_pi)
 branch_pts_gamma = branch_points(decay_channel_gamma)
 ```
+
+### Interpolated threshold density
+
+For channels that are expensive to evaluate repeatedly near threshold, you can
+tabulate `ρ_thr` on a fixed mass grid and then reuse the interpolated
+representation. The package keeps the exact tabulated values below the chosen
+cutoff and matches smoothly to a rescaled `ρ_tb` above it.
+
+```julia
+using xDDPhaseSpace
+
+const mγ = 0.0
+const mD0 = 1.86483
+const mDstar0 = 2.00685
+const ΓDstar0 = 55.2e-6
+const μ0 = -3.77
+
+BW0 = BW(m = mDstar0, Γ = ΓDstar0)
+
+ch_gamma = γDD(
+    (m1 = mγ, m2 = mD0, m3 = mD0),
+    BW0,
+    BW0,
+    μ0, -μ0,
+)
+
+# Build an interpolated version of ρ_thr up to the selected cutoff.
+ch_gamma_interpolated = interpolated(ch_gamma, 3.8725; estep_GeV = 1.3e-3)
+
+thr = mDstar0 + mD0
+m = thr + 5 * 1.3e-3
+
+# In the interpolation region, ρ_thr is read from the tabulated grid.
+ρ_direct = ρ_thr(ch_gamma, m)
+ρ_interp = ρ_thr(ch_gamma_interpolated, m)
+
+# The dispersive construction uses the interpolated density as input.
+disp = dispersive(ch_gamma_interpolated, m)
+
+ρ_direct
+ρ_interp
+imag(disp)
+```
+
+At grid points used to build the interpolant, `ρ_thr(ch_gamma_interpolated, m)`
+matches the tabulated `ρ_thr(ch_gamma, m)`. For real `m`, the numerical
+imaginary part of `dispersive(ch_gamma_interpolated, m)` reproduces
+`ρ_thr(ch_gamma_interpolated, m)`.

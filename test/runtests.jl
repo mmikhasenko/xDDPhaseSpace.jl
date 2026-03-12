@@ -19,7 +19,7 @@ end
     @test xDDPhaseSpace.B(v) != 0
     @test xDDPhaseSpace.C(v) != 0
     @test xDDPhaseSpace.C((; s, s12, s13, msq)) ≈
-          xDDPhaseSpace.C((; s12 = s13, s13 = s12, s, msq))
+          xDDPhaseSpace.C((; s12=s13, s13=s12, s, msq))
     @test xDDPhaseSpace.D(v) != 0
     @test xDDPhaseSpace.E(v) != 0
     @test xDDPhaseSpace.G(v) != 0
@@ -44,7 +44,7 @@ decay_matrix_element_squared(d::TestCh, s, σ3, σ2) = 1.0
 @testset "implementation of the phase-space integral" begin
 
     e_test = WithThrE(0.0, mD⁰ + mDˣ⁺)
-    ms_test = (m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰)
+    ms_test = (m1=mπ⁺, m2=mD⁰, m3=mD⁰)
 
     t = TestCh(ms_test)
     ρ_2dim = ρ_thr(t, e2m(e_test))
@@ -72,7 +72,7 @@ import xDDPhaseSpace: σ3of1_pm, σ3of1, σ2of3_pm
 @testset "σ3of1_pm and σ3of1" begin
     m = e2m(WithThrE(1.1, mD⁰ + mDˣ⁺))
     # 
-    ms = (m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰)
+    ms = (m1=mπ⁺, m2=mD⁰, m3=mD⁰)
     σ1 = (ms.m2 + ms.m3)^2 + rand() * ((m - ms.m1)^2 - (ms.m2 + ms.m3)^2)
     #
     zm1, z1 = σ3of1_pm(σ1, ms^2, m^2)
@@ -95,14 +95,14 @@ end
 
 
 decay_channel =
-    πDD((m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺))
+    πDD((m1=mπ⁺, m2=mD⁰, m3=mD⁰), BW(m=mDˣ⁺, Γ=ΓDˣ⁺), BW(m=mDˣ⁺, Γ=ΓDˣ⁺))
 
 ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺) |> e2m) # 1MeV from threshold
 
 @testset "πDD decay channel with Breit-Wigner resonances" begin
     # Create decay channel with πDD and two D*+ resonances
     decay_channel =
-        πDD((m1 = mπ⁺, m2 = mD⁰, m3 = mD⁰), BW(m = mDˣ⁺, Γ = ΓDˣ⁺), BW(m = mDˣ⁺, Γ = ΓDˣ⁺))
+        πDD((m1=mπ⁺, m2=mD⁰, m3=mD⁰), BW(m=mDˣ⁺, Γ=ΓDˣ⁺), BW(m=mDˣ⁺, Γ=ΓDˣ⁺))
 
     # Test threshold calculation 1MeV above threshold
     ρ_value = ρ_thr(decay_channel, WithThrE(1.0, mD⁰ + mDˣ⁺) |> e2m)
@@ -134,9 +134,9 @@ end
 
     # Create decay channel with γDD and two D*+ resonances
     decay_channel = γDD(
-        (m1 = 0.0, m2 = mD⁰, m3 = mD⁰),
-        BW(m = mDˣ⁺, Γ = ΓDˣ⁺),
-        BW(m = mDˣ⁺, Γ = ΓDˣ⁺),
+        (m1=0.0, m2=mD⁰, m3=mD⁰),
+        BW(m=mDˣ⁺, Γ=ΓDˣ⁺),
+        BW(m=mDˣ⁺, Γ=ΓDˣ⁺),
         μ12,
         μ13,
     )
@@ -159,4 +159,43 @@ end
     @test startswith(nt.type, "γDD")
     @test nt.μ12 == μ12
     @test nt.μ13 == μ13
+end
+
+@testset "interpolated γDD channel" begin
+    # Use the charged D* constants already defined above
+    μ12 = -3.77
+    μ13 = +3.77
+
+    BW0 = BW(m=mDˣ⁺, Γ=ΓDˣ⁺)
+
+    ch_gamma = γDD(
+        (m1=0.0, m2=mD⁰, m3=mD⁰),
+        BW0,
+        BW0,
+        μ12,
+        μ13,
+    )
+
+    estep_GeV = 1.3e-3
+    m_thr_eff = mD⁰ + mDˣ⁺
+    cutoff = m_thr_eff + 5 * estep_GeV
+
+    ch_gamma_interpolated = interpolated(ch_gamma, cutoff; estep_GeV)
+
+    # The interpolation grid starts at the first stored knot. The 6th
+    # coefficient corresponds to m = m_thr + 5 * Δm for this grid.
+    m_thr = first(ch_gamma_interpolated.itr.knots[1])
+    m_test = m_thr + 5 * estep_GeV
+    @test m_test ≈ ch_gamma_interpolated.itr.knots[1][6]
+
+    # 1. Interpolated at m = m_thr + 5 * Δm should match ρ_thr exactly
+    ρ_direct = ρ_thr(ch_gamma, m_test)
+    ρ_interp = ρ_thr(ch_gamma_interpolated, m_test)
+    @test ch_gamma_interpolated.itr.coefs[6] ≈ ρ_direct
+    @test ρ_interp ≈ ch_gamma_interpolated.itr.coefs[6]
+    @test ρ_interp ≈ ρ_direct atol = 1e-6
+
+    # 2. Imaginary part of dispersive equals ρ_thr for the interpolated channel
+    disp_val = dispersive(ch_gamma_interpolated, m_test)
+    @test imag(disp_val) ≈ ρ_thr(ch_gamma_interpolated, m_test) atol = 1e-6
 end
