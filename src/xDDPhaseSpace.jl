@@ -1,13 +1,16 @@
 module xDDPhaseSpace
 
 using Cuba
+using QuadGK
 using Parameters
+using Interpolations: interpolate, Gridded, Linear
 
 import Base.^
 ^(ms::NamedTuple{(:m1, :m2, :m3),T} where {T}, n::Int) = Tuple(ms) .^ n  # type piracy -- not good
 
 export WithThrE
 export e2m
+const iϵ = 1e-6im
 include("withthr.jl")
 
 export AbstractxDD
@@ -33,6 +36,10 @@ include("covariant_exptessions.jl")
 include("mainmodel-pi.jl")
 export γDD
 include("mainmodel-gamma.jl")
+
+export interpolated
+export dispersive
+include("interpolated.jl")
 
 export obj2nt
 export constructchannel
