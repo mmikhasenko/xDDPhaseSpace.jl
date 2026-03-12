@@ -79,7 +79,7 @@ Calculate the dispersive part associated with an interpolated channel.
 This evaluates the dispersion integral built from `ρ_thr(d, m')` and returns
 the first-sheet analytic continuation as a function of the external mass `m`.
 For real `m`, the method below evaluates the integral slightly above the real
-axis, `m + 1e-6im`, so that the expected imaginary part is recovered numerically.
+axis, `m + iϵ`, so that the expected imaginary part is recovered numerically.
 
 # Arguments
 - `d::interpolated`: The interpolated phase space density.
@@ -95,4 +95,4 @@ function dispersive(d::interpolated, m)
     s / π * quadgk(integrand, mth^2, Inf)[1]
 end
 # 
-dispersive(d::interpolated, m::Real) = dispersive(d, m + 1e-6im)
+dispersive(d::interpolated, m::Real) = dispersive(d, m + iϵ)

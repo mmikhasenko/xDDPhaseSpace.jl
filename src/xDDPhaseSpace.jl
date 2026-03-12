@@ -10,6 +10,7 @@ import Base.^
 
 export WithThrE
 export e2m
+const iϵ = 1e-6im
 include("withthr.jl")
 
 export AbstractxDD
