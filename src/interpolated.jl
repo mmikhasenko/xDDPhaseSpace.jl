@@ -67,7 +67,7 @@ function ρ_thr(d::interpolated, m::Real)
     d.itr(m) :
     ρ_tb(d.channel, m) * d.cutoffratio
 end
-ρ_thr(d::interpolated, m::Complex) = ρ_thr(d, m)
+ρ_thr(d::interpolated, m::Complex) = ρ_thr(d.channel, m)
 
 
 
