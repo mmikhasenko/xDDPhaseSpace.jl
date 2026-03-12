@@ -195,6 +195,10 @@ end
     @test ρ_interp ≈ ch_gamma_interpolated.itr.coefs[6]
     @test ρ_interp ≈ ρ_direct atol = 1e-6
 
+    # 1b. Complex masses should bypass interpolation and use the wrapped channel
+    m_complex = m_test + 1e-6im
+    @test ρ_thr(ch_gamma_interpolated, m_complex) ≈ ρ_thr(ch_gamma, m_complex)
+
     # 2. Imaginary part of dispersive equals ρ_thr for the interpolated channel
     disp_val = dispersive(ch_gamma_interpolated, m_test)
     @test imag(disp_val) ≈ ρ_thr(ch_gamma_interpolated, m_test) atol = 1e-6
